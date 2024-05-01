@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AD Bypass</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #1e1e1e, #2d2d2d);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      width: 80%;
+      max-width: 600px;
+      padding: 20px;
+      background-color: rgba(0, 0, 0, 0.8);
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    }
+    h1 {
+      text-align: center;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    input[type="text"], select {
+      width: calc(100% - 20px);
+      padding: 10px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 4px;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      box-sizing: border-box;
+    }
+    option {
+      background-color: rgba(6, 6, 6);
+      color: #eee;
+    }
+    button[type="submit"], button#copyButton {
+      width: calc(100% - 20px);
+      padding: 10px 20px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 4px;
+      background-color: #007bff;
+      color: #fff;
+      cursor: pointer;
+    }
+    button[type="submit"]:hover, button#copyButton:hover {
+      background-color: #0056b3;
+    }
+	
+	.footer-heart{text-align:center;font-family: open sans, sans-serif; font-size: 12px;}
+
+	.footer-heart a{border-bottom: 1px solid #FFFFFF;color: #FFFFFF;padding-bottom: .25em; text-decoration: none; font-size: 12px;}
+
+	.footer-heart a:hover{color:#2196f3; background-image: url("data:image/svg+xml;charset=utf8,%3Csvg id='squiggle-link' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:ev='http://www.w3.org/2001/xml-events' viewBox='0 0 20 4'%3E%3Cstyle type='text/css'%3E.squiggle{animation:shift .3s linear infinite;}@keyframes shift {from {transform:translateX(0);}to {transform:translateX(-20px);}}%3C/style%3E%3Cpath fill='none' stroke='%23453886' stroke-width='2' class='squiggle' d='M0,3.5 c 5,0,5,-3,10,-3 s 5,3,10,3 c 5,0,5,-3,10,-3 s 5,3,10,3'/%3E%3C/svg%3E");
+	  background-position: bottom;
+	  background-repeat: repeat-x;
+	  background-size: 20%;
+	  border-bottom: 0;
+	  padding-bottom: .3em;
+	  text-decoration: none;}
+
+	.emoji{vertical-align: middle;}
+
+    #loader {
+      display: none;
+      text-align: center;
+      margin-top: 20px;
+      color: #fff;
+    }
+    pre {
+	  width: calc(100% - 40px);
+      padding: 10px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      overflow: auto;
+      color: #fff;
+    }
+    .congrats {
+      text-align: center;
+      color: #abc4b2;
+      font-weight: bold;
+      font-size: 17px;
+    }
+
+    /* Media Query for Mobile */
+    @media (max-width: 600px) {
+      .container {
+        width: 80%;
+        margin: 20px auto;
+      }
+      input[type="text"], select, button[type="submit"], button#copyButton {
+        width: 90%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Enter Your Link</h1>
+    <form id="myForm" method="POST" action="/process_data"> 
+      <input type="text" id="input-data" name="data" placeholder="Enter Movie or Episode Link">
+      <select name="choiced" onchange="toggleSelector()">
+        <option value="movie">MoviesMod (Movie)</option>
+        <option value="episodes">MoviesMod (Episodes)</option>
+		<option value="bollyflix">Bollyflix (Movie)</option>
+		<option value="vegamovies">VegaMovies (Movie)</option>
+      </select>
+	  <select name="quality" style="display: none;">
+        <option value="0">480p</option>
+        <option value="1">720p</option>
+		<option value="2">1080p</option>
+		<option value="3">2160p</option>
+      </select>
+      <button type="submit">Submit</button>
+      <div id="loader">Loading...</div>
+      <pre id="result" style="display: none;"></pre>
+	  <button type="button" id="copyButton" style="display: none;">Copy</button>
+	<p class="footer-heart"> Made with <g-emoji class="g-emoji" alias="heart" fallback-src="https://github.githubassets.com/images/icons/emoji/unicode/2764.png">
+	<img class="emoji" alt="heart" height="15" width="15" src="https://github.githubassets.com/images/icons/emoji/unicode/2764.png"></g-emoji> by <a href="https://kartikpanwar.eu.org">Kartik Panwar</a>
+	</p>
+    </form>
+	
+  </div>
+
+  <script>
+    const form = document.getElementById('myForm');
+    form.addEventListener('submit', function(event) {
+      event.preventDefault(); 
+      const inputData = document.getElementById('input-data').value;
+      const choice = document.querySelector('select[name="choiced"]').value; 
+	  const quality = document.querySelector('select[name="quality"]').value; 
+      
+      document.getElementById('loader').style.display = 'block'; // Show loader
+	  document.getElementById('result').style.display = 'none';
+	  document.getElementById('copyButton').style.display = 'none';
+
+      fetch('/process_data', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json' 
+          },
+          body: JSON.stringify({ data: inputData, choice: choice, quality: quality }) 
+        })
+        .then(response => response.text()) 
+        .then(result => {
+          document.getElementById('result').textContent = result;
+		  document.getElementById('result').style.display = 'block';
+          document.getElementById('copyButton').style.display = 'block';
+          document.getElementById('loader').style.display = 'none'; // Hide loader after success
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          document.getElementById('copyButton').style.display = 'none';
+		  document.getElementById('result').style.display = 'none';
+          document.getElementById('loader').style.display = 'none'; // Hide loader on error 
+        })
+        .finally(() => {
+          document.getElementById('copyButton').style.display = 'block';
+		  document.getElementById('result').style.display = 'block';
+          document.getElementById('loader').style.display = 'none'; // Ensure it's hidden
+        });
+    });
+	//Drop Down functionality
+	function toggleSelector() {
+	  var choiced = document.getElementsByName("choiced")[0];
+	  var qualities = document.getElementsByName("quality")[0];
+	  var mainValue = choiced.value;
+	  
+	  // Check if the selected option is "Option vegamovies"
+	  if (mainValue === "vegamovies") {
+		qualities.style.display = "block"; // Show the additional selector
+	  } else {
+		qualities.style.display = "none"; // Hide the additional selector
+	  }
+	}
+	// Click to Copy Functionality
+    document.getElementById('copyButton').addEventListener('click', function() {
+      const textToCopy = document.getElementById('result').textContent;
+      navigator.clipboard.writeText(textToCopy)
+        .then(() => {
+          console.log('Text copied'); 
+        })
+        .catch(err => {
+          console.error('Error copying text: ', err);
+        });
+    });
+  </script>
+</body>
+</html>
