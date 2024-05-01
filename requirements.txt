@@ -1,4 +1,3 @@
-urllib.parse
 requests
 base64
 flask
