@@ -24,34 +24,7 @@ def vegamovies(movie_link,quality):
 
     if quality in download_links:
         value = download_links[quality]
-
-    h = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-        "Content-Type": "application/x-www-form-urlencoded",
-    }
-    r1 = requests.post(url = 'https://vegamovies.ph/red.php', headers = h, data = f"link={value}")
-    url_match = re.search(r'window\.location\.href\s*=\s*"([^"]+)"', r1.text)
-    if url_match:
-        link1 = url_match.group(1)
-
-
-
-    r2 = requests.get(url = link1, headers = h1)
-    link_match = re.search(r'https://v-cloud\.bio/\S+', r2.text)
-    if link_match:
-        link2 = link_match.group(0)
-        link2 = link2[:-1]
-
-
-    r3 = requests.get(url = link2, headers = h)
-    url_match1 = re.search(r"var url = '([^']+)';", r3.text)
-    if url_match1:
-        link3 = url_match1.group(1)
-        url_match2 = re.search(r"id=([^']+)", link3)
-        if url_match2:
-            url = url_match2.group(1)
-    final = f"{link2}?token={url}"
+    final = print(download_links)
     return final
 
 
