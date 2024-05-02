@@ -98,8 +98,13 @@ def bollyflix(movie_link):
     return final
 
 # Helper function for movie logic
-def process_movie_link(movie_link):
-    r = requests.get(url = movie_link)
+def moviesmod_m(movie_link):
+    h1 = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "X-Forwarded-For": "192.168.29.7",
+    }
+    r = requests.post(url = movie_link, headers = h1)
     print(r.text)
 
     soup = BeautifulSoup(r.text, 'html.parser')
@@ -196,7 +201,7 @@ def process_movie_link(movie_link):
 
     return final
 
-def process_episode_link(series_link):
+def moviesmod_e(series_link):
     r = requests.get(url = series_link)
     html_source = r.text
     soup = BeautifulSoup(html_source, 'html.parser')
@@ -315,9 +320,9 @@ def process_data():
     elif choice == 'bollyflix':
         result = bollyflix(movie_link)
     elif choice == 'movie':
-        result = process_movie_link(movie_link)
+        result = moviesmod_m(movie_link)
     elif choice == 'episodes':
-        result = process_episode_link(movie_link)
+        result = moviesmod_e(movie_link)
     else:
         result = "Invalid choice. Please select 'movie' or 'episodes'."
 
