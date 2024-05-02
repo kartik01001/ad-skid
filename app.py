@@ -99,7 +99,8 @@ def bollyflix(movie_link):
 
 # Helper function for movie logic
 def process_movie_link(movie_link):
-    r = requests.post(url = movie_link)
+    r = requests.get(url = movie_link)
+    print(r.text)
 
     soup = BeautifulSoup(r.text, 'html.parser')
     anchor_tag = soup.find('a', class_='maxbutton-fast-server-gdrive')
