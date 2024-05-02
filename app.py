@@ -104,8 +104,8 @@ def moviesmod_m(movie_link):
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
         "X-Forwarded-For": "192.168.29.7",
     }
-    r = requests.post(url = movie_link, headers = h1)
-    print(r.text)
+    r = requests.get(url = movie_link, headers = h1)
+    #print(r.text)
 
     soup = BeautifulSoup(r.text, 'html.parser')
     anchor_tag = soup.find('a', class_='maxbutton-fast-server-gdrive')
@@ -202,7 +202,12 @@ def moviesmod_m(movie_link):
     return final
 
 def moviesmod_e(series_link):
-    r = requests.get(url = series_link)
+    h1 = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "X-Forwarded-For": "192.168.29.7",
+    }
+    r = requests.get(url = series_link, headers = h1)
     html_source = r.text
     soup = BeautifulSoup(html_source, 'html.parser')
     episode_links = soup.find_all('h3')
