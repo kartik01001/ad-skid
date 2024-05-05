@@ -30,7 +30,7 @@ def vegamovies(movie_link,quality):
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
         "Content-Type": "application/x-www-form-urlencoded",
     }
-    r1 = requests.post(url = 'https://vegamovies.ph/red.php', headers = h, data = f"link={value}")
+    r1 = requests.post(url = 'https://vegamovies.cash/red.php', headers = h, data = f"link={value}")
     url_match = re.search(r'window\.location\.href\s*=\s*"([^"]+)"', r1.text)
     if url_match:
         link1 = url_match.group(1)
