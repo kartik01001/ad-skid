@@ -9,6 +9,9 @@ import re
 app = Flask(__name__)
 
 def vegamovies(movie_link,quality):
+    slash_index = movie_link.find('/', 8)
+
+    domain = movie_link[:slash_index] if slash_index != -1 else movie_link
     h1 = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
@@ -30,7 +33,7 @@ def vegamovies(movie_link,quality):
         "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
         "Content-Type": "application/x-www-form-urlencoded",
     }
-    r1 = requests.post(url = 'https://vegamovies.cash/red.php', headers = h, data = f"link={value}")
+    r1 = requests.post(url = f'{domain}/red.php', headers = h, data = f"link={value}")
     url_match = re.search(r'window\.location\.href\s*=\s*"([^"]+)"', r1.text)
     if url_match:
         link1 = url_match.group(1)
