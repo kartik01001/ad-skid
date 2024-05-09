@@ -1,12 +1,51 @@
 from flask import Flask, request, render_template
-from urllib.parse import urlencode 
+from urllib.parse import urlencode
+from urllib.parse import urlparse
 from bs4 import BeautifulSoup
 import urllib.parse
 import requests
 import base64
+import json
 import re
 
 app = Flask(__name__)
+
+def raretoon(movie_link):
+    r = requests.get(url = movie_link)
+    soup = BeautifulSoup(r.text, 'html.parser')
+    dec = soup.find('div', class_='entry-content')
+    if dec:
+        links = dec.find_all('a')
+        url_list = []
+        for link in links:
+            url = link.get('href')
+            url_list.append(url)
+
+    results = []
+    for i, movie_link in enumerate(url_list, start=1):
+        h = {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.6261.112 Safari/537.36",
+        }
+        r = requests.get(url = movie_link, headers = h)
+        pattern = r"document\.location\.href=['\"](.*?)['\"]"
+        matches = re.findall(pattern, r.text)
+        if matches:
+            href_url = matches[0]
+
+            parsed_url = urlparse(href_url)
+            path = parsed_url.path
+            filename = path.rsplit('/', 1)[-1]
+        
+        r1 = requests.get(url = f"https://api.shrslink.xyz/v?shortid={filename}&initial=true&referrer=")
+        data = json.loads(r1.text)
+        sv = data.get('sid')
+
+        r2 = requests.get(url = f"https://api.shrslink.xyz/get_link?sid={sv}")
+        data = json.loads(r2.text)
+        final = data['link_info']['destination']
+
+        results.append(f"Episode {i}: {final}") 
+    return "\n".join(results) 
 
 def vegamovies(movie_link,quality):
     slash_index = movie_link.find('/', 8)
@@ -57,7 +96,6 @@ def vegamovies(movie_link,quality):
     final = f"{link2}?token={url}"
     return final
 
-
 def bollyflix(movie_link):
     q_m_i = movie_link.find('?')
     new_url = movie_link[q_m_i:]
@@ -100,7 +138,6 @@ def bollyflix(movie_link):
             
     return final
 
-# Helper function for movie logic
 def moviesmod_m(movie_link):
     h1 = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:125.0) Gecko/20100101 Firefox/125.0",
@@ -307,7 +344,6 @@ def moviesmod_e(series_link):
         if match3:
             url = match3.group(1)
             semi_final = url
-#        final = f"{modi5_url}{semi_final}"
 
         final = f"{modi5_url}{semi_final}" 
         results.append(f"Episode {i}: {final}") 
@@ -323,7 +359,9 @@ def process_data():
     movie_link = input_data['data']  
     choice = input_data['choice']
     quality = input_data['quality']
-    if choice == 'vegamovies':
+    if choice == 'raretoon':
+        result = raretoon(movie_link)
+    elif choice == 'vegamovies':
         result = vegamovies(movie_link,quality)
     elif choice == 'bollyflix':
         result = bollyflix(movie_link)
